@@ -1,40 +1,28 @@
 var express = require('express');
 var multer  = require('multer');
-var upload = multer({ dest: '../public/uploads/' });
+var bodyParser = require('body-parser')
+var cors = require('cors')
+
+var upload = multer({ dest: 'uploads/' });
 
 var app = express();
 
-var obj = {}
+app.use(bodyParser.json());
+app.use(cors());
 
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
-    res.render('upload.html');		
+
+    res.render('index.html');		
 });
 
-//var uploadedFiles = upload.fields([{name : 'myfile', maxCount : 1}])
 
-var uploadedFiles = upload.single('myfile')
-
-app.post('/bars/index', uploadedFiles, function(req,res,next){
+app.post('/uploadImages', upload.single('myfile'), function(req,res,next){
     
-    upload(req,res,function(err){
-        
-        console.log('Error while uploading!')
-    })
-    
-    obj = {size : 1};
-    console.log(req.files);
+    return res.json(req.file.size);
     
 })
-
-
-
-app.get('/get-file-size', function(req,res){
-    
-    res.send(JSON.stringify(obj));
-})
-
 
 
 app.listen(8080,function(){
